@@ -4,17 +4,19 @@
 
 require 'drb'
 require 'sqlite3'
+require 'rxfhelper'
 require 'hashcache'
 
 
 class SQLiteServer
   include SQLite3
   
-  def initialize(cache: 5, debug: false)
+  def initialize(cache: 5, debug: false, filepath: '.')
     
     @dbcache = HashCache.new(cache: cache)
     @h = {}
     @debug = debug
+    Dir.chdir filepath    
     
   end
   
@@ -31,14 +33,25 @@ class SQLiteServer
     begin      
       read(dbfile).execute(*args, &blk)
     rescue
-      ($!).inspect
+      'SQLiteServerError: ' + ($!).inspect
     end
 
   end
   
+  def exists?(raw_dbfile)
+    
+    dbfile = if raw_dbfile =~ /^sqlite:\/\// then    
+      raw_dbfile[/^sqlite:\/\/[^\/]+\/(.*)/,1]
+    else
+      raw_dbfile      
+    end
+    
+    File.exists? dbfile
+  end
+  
   def load(dbfile)
     read dbfile
-    'loaded'
+    'loaded ' + dbfile
   end
   
   def query(*args, &blk)
@@ -46,7 +59,7 @@ class SQLiteServer
     begin
       read(dbfile).query(*args, &blk)
     rescue
-      ($!).inspect
+      'SQLiteServerError: ' + ($!).inspect
     end
     
   end  
@@ -75,4 +88,3 @@ class SQLiteServer2018
 
   end  
 end
-
