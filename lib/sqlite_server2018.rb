@@ -23,7 +23,6 @@ class SQLiteServer
   def execute(dbfile, *args, &blk)
     
     p 'dbfile: ' + dbfile if @debug
-    db = Database.new dbfile
     
     if @debug then
       p 'db: ' + db.inspect
@@ -74,16 +73,17 @@ end
 
 class SQLiteServer2018
 
-  def initialize(host: 'localhost', port: '57000', cache: 5)
+  def initialize(host: 'localhost', port: '57000', cache: 5, 
+                 debug: false, filepath: '.')
 
-    @host, @port, @cache = host, port, cache
+    @host, @port, @cache, @filepath = host, port, cache, filepath
 
   end
 
   def start()
     
     DRb.start_service "druby://#{@host}:#{@port}", 
-        SQLiteServer.new(cache: @cache)
+        SQLiteServer.new(cache: @cache, debug: @debug, filepath: @filepath)
     DRb.thread.join
 
   end  
