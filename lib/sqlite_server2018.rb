@@ -30,7 +30,10 @@ class SQLiteServer
     end
     
     begin      
-      read(dbfile).execute(*args, &blk)
+      
+      r = read(dbfile).execute(*args).map(&:to_a)
+      blk ? r.each {|*x| blk.call(*x) } : r
+
     rescue
       'SQLiteServerError: ' + ($!).inspect
     end
@@ -48,15 +51,20 @@ class SQLiteServer
     File.exists? dbfile
   end
   
-  def load(dbfile)
+  def load_db(dbfile)
     read dbfile
     'loaded ' + dbfile
   end
   
-  def query(*args, &blk)
+  def ping()
+    :pong
+  end
+  
+  def query(dbfile, *args, &blk)
     
     begin
-      read(dbfile).query(*args, &blk)
+      r = read(dbfile).query(*args).map(&:to_a)
+      blk ? r.each {|*x| blk.call(*x) } : r      
     rescue
       'SQLiteServerError: ' + ($!).inspect
     end
