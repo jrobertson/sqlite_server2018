@@ -60,6 +60,28 @@ class SQLiteServer
     :pong
   end
   
+  def results_as_hash(dbfile)    
+    read(dbfile).results_as_hash
+  end
+  
+  def results_as_hash=(args)
+    dbfile, val = args
+    puts 'inside results_as_hash=' + val.inspect if @debug
+    read(dbfile).results_as_hash = val
+  end
+
+  def table_info(args)
+    
+    dbfile, s = args
+    
+    begin
+      read(dbfile).table_info(s)
+    rescue
+      'SQLiteServerError: ' + ($!).inspect
+    end    
+    
+  end
+  
   def query(dbfile, *args, &blk)
     
     begin
