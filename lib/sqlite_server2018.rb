@@ -82,6 +82,19 @@ class SQLiteServer
     
   end
   
+  def tables(dbfile)
+        
+    begin
+      sql = "SELECT name FROM sqlite_master WHERE type='table';"
+      a = read(dbfile).execute(sql).flat_map(&:to_a)
+      sys = a.grep /^sqlite_/
+      (a - sys)
+    rescue
+      'SQLiteServerError: ' + ($!).inspect
+    end    
+        
+  end
+  
   def query(dbfile, *args, &blk)
     
     begin
