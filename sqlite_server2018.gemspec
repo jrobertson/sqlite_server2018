@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'sqlite_server2018'
-  s.version = '0.3.0'
+  s.version = '0.3.1'
   s.summary = 'Enables SQLite database access from a DRb server.'
   s.authors = ['James Robertson']
   s.files = Dir['lib/sqlite_server2018.rb']

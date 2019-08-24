@@ -51,6 +51,18 @@ class SQLiteServer
     File.exists? dbfile
   end
   
+  def fields(*args)
+    
+    dbfile, table = args
+    
+    begin
+      read(dbfile).table_info(table).map {|x| x['name'].to_sym }
+    rescue
+      'SQLiteServerError: ' + ($!).inspect
+    end    
+    
+  end  
+  
   def load_db(dbfile)
     read dbfile
     'loaded ' + dbfile
@@ -70,7 +82,7 @@ class SQLiteServer
     read(dbfile).results_as_hash = val
   end
 
-  def table_info(args)
+  def table_info(*args)
     
     dbfile, s = args
     
